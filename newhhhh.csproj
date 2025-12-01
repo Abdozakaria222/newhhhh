@@ -5,10 +5,10 @@
     <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- ملفات المشروع -->
     <Compile Include="Program.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs" />
@@ -16,12 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Text.Json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="MainForm.resx" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
 </Project>
+<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
