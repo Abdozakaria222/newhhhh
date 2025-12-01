@@ -33,6 +33,7 @@ namespace newhhhh
             this.btnUpdateList = new System.Windows.Forms.Button();
             this.btnSaveResults = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.btnBestDns = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBoxResults
@@ -41,7 +42,7 @@ namespace newhhhh
             this.listBoxResults.ItemHeight = 15;
             this.listBoxResults.Location = new System.Drawing.Point(12, 12);
             this.listBoxResults.Name = "listBoxResults";
-            this.listBoxResults.Size = new System.Drawing.Size(560, 334);
+            this.listBoxResults.Size = new System.Drawing.Size(660, 334);
             this.listBoxResults.TabIndex = 0;
             // 
             // btnTestDns
@@ -83,18 +84,29 @@ namespace newhhhh
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "جاري التحميل...";
             // 
+            // btnBestDns
+            // 
+            this.btnBestDns.Location = new System.Drawing.Point(426, 360);
+            this.btnBestDns.Name = "btnBestDns";
+            this.btnBestDns.Size = new System.Drawing.Size(120, 40);
+            this.btnBestDns.TabIndex = 5;
+            this.btnBestDns.Text = "أفضل DNS";
+            this.btnBestDns.UseVisualStyleBackColor = true;
+            this.btnBestDns.Click += new System.EventHandler(this.btnBestDns_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 436);
+            this.ClientSize = new System.Drawing.Size(684, 436);
+            this.Controls.Add(this.btnBestDns);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnSaveResults);
             this.Controls.Add(this.btnUpdateList);
             this.Controls.Add(this.btnTestDns);
             this.Controls.Add(this.listBoxResults);
             this.Name = "MainForm";
-            this.Text = "DNS Tester";
+            this.Text = "DNS Tester - مع تحديد الأفضل";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -107,5 +119,6 @@ namespace newhhhh
         private System.Windows.Forms.Button btnUpdateList;
         private System.Windows.Forms.Button btnSaveResults;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Button btnBestDns;
     }
 }
