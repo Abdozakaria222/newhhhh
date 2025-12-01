@@ -20,15 +20,14 @@ jobs:
     - name: Add NuGet to PATH
       uses: nuget/setup-nuget@v2
 
-    - name: Restore NuGet packages
-      run: nuget restore DNSOptimizer.sln
+    - name: Restore packages (optional)
+      run: nuget restore newhhhh.csproj
 
-    - name: Build app using MSBuild
-      run: msbuild DNSOptimizer.csproj /p:Configuration=Release
+    - name: Build project
+      run: msbuild newhhhh.csproj /p:Configuration=Release
 
-    - name: Upload Artifacts
+    - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
       with:
         name: DNSOptimizer-Build
-        path: |
-          bin\Release\
+        path: bin\Release\
