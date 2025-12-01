@@ -1,74 +1,85 @@
-namespace DNSOptimizer
+namespace newhhhh
 {
     partial class MainForm
     {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.DataGridView gridResults;
-        private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Button btnApplyBest;
-        private System.Windows.Forms.Button btnUpdateList;
-        private System.Windows.Forms.ProgressBar progressBar;
 
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
+            {
                 components.Dispose();
+            }
             base.Dispose(disposing);
         }
 
+        #region Windows Form Designer generated code
+
         private void InitializeComponent()
         {
-            this.gridResults = new System.Windows.Forms.DataGridView();
-            this.btnStart = new System.Windows.Forms.Button();
-            this.btnApplyBest = new System.Windows.Forms.Button();
+            this.listBoxResults = new System.Windows.Forms.ListBox();
+            this.btnTestDns = new System.Windows.Forms.Button();
             this.btnUpdateList = new System.Windows.Forms.Button();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-
-            ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
+            this.btnSaveResults = new System.Windows.Forms.Button();
             this.SuspendLayout();
 
-            // gridResults
-            this.gridResults.AllowUserToAddRows = false;
-            this.gridResults.AllowUserToDeleteRows = false;
-            this.gridResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.gridResults.Location = new System.Drawing.Point(20, 20);
-            this.gridResults.Size = new System.Drawing.Size(560, 260);
+            // listBoxResults
+            this.listBoxResults.FormattingEnabled = true;
+            this.listBoxResults.ItemHeight = 16;
+            this.listBoxResults.Location = new System.Drawing.Point(12, 12);
+            this.listBoxResults.Name = "listBoxResults";
+            this.listBoxResults.Size = new System.Drawing.Size(420, 260);
+            this.listBoxResults.TabIndex = 0;
 
-            // btnStart
-            this.btnStart.Location = new System.Drawing.Point(20, 300);
-            this.btnStart.Size = new System.Drawing.Size(160, 40);
-            this.btnStart.Text = "ابدأ الفحص 🚀";
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
-
-            // btnApplyBest
-            this.btnApplyBest.Location = new System.Drawing.Point(200, 300);
-            this.btnApplyBest.Size = new System.Drawing.Size(160, 40);
-            this.btnApplyBest.Text = "تطبيق الأسرع ⚡";
-            this.btnApplyBest.Click += new System.EventHandler(this.btnApplyBest_Click);
+            // btnTestDns
+            this.btnTestDns.Location = new System.Drawing.Point(12, 290);
+            this.btnTestDns.Name = "btnTestDns";
+            this.btnTestDns.Size = new System.Drawing.Size(120, 35);
+            this.btnTestDns.Text = "اختبر DNS";
+            this.btnTestDns.UseVisualStyleBackColor = true;
+            this.btnTestDns.Click += new System.EventHandler(this.btnTestDns_Click);
 
             // btnUpdateList
-            this.btnUpdateList.Location = new System.Drawing.Point(380, 300);
-            this.btnUpdateList.Size = new System.Drawing.Size(160, 40);
-            this.btnUpdateList.Text = "تحديث القائمة 🔄";
+            this.btnUpdateList.Location = new System.Drawing.Point(150, 290);
+            this.btnUpdateList.Name = "btnUpdateList";
+            this.btnUpdateList.Size = new System.Drawing.Size(130, 35);
+            this.btnUpdateList.Text = "تحديث القائمة";
+            this.btnUpdateList.UseVisualStyleBackColor = true;
             this.btnUpdateList.Click += new System.EventHandler(this.btnUpdateList_Click);
 
-            // progressBar
-            this.progressBar.Location = new System.Drawing.Point(20, 360);
-            this.progressBar.Size = new System.Drawing.Size(560, 20);
+            // btnSaveResults
+            this.btnSaveResults.Location = new System.Drawing.Point(300, 290);
+            this.btnSaveResults.Name = "btnSaveResults";
+            this.btnSaveResults.Size = new System.Drawing.Size(130, 35);
+            this.btnSaveResults.Text = "حفظ النتائج";
+            this.btnSaveResults.UseVisualStyleBackColor = true;
+            this.btnSaveResults.Click += new System.EventHandler(this.btnSaveResults_Click);
 
             // MainForm
-            this.ClientSize = new System.Drawing.Size(600, 400);
-            this.Controls.Add(this.gridResults);
-            this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.btnApplyBest);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(450, 340);
+            this.Controls.Add(this.btnSaveResults);
             this.Controls.Add(this.btnUpdateList);
-            this.Controls.Add(this.progressBar);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            this.Controls.Add(this.btnTestDns);
+            this.Controls.Add(this.listBoxResults);
             this.Name = "MainForm";
-            this.Text = "DNS Optimizer - اختبار أسرع DNS للإنترنت";
-            ((System.ComponentModel.ISupportInitialize)(this.gridResults)).EndInit();
+            this.Text = "DNS Optimizer";
             this.ResumeLayout(false);
         }
+
+        #endregion
+
+        private System.Windows.Forms.ListBox listBoxResults;
+        private System.Windows.Forms.Button btnTestDns;
+        private System.Windows.Forms.Button btnUpdateList;
+        private System.Windows.Forms.Button btnSaveResults;
     }
 }
