@@ -3,6 +3,24 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <RootNamespace>DNSOptimizer</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- مراجع أساسية لـ JSON و HTTP -->
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Text.Json">
+      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Text.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="MainForm.cs" />
+    <Compile Include="MainForm.Designer.cs" />
+    <Compile Include="DNSList\DnsTester.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx" />
+  </ItemGroup>
 </Project>
