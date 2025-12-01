@@ -18,19 +18,15 @@ namespace newhhhh
             LoadDnsList();
         }
 
-        // تحميل قائمة DNS من الإنترنت أو من ملف محلي
         private void LoadDnsList()
         {
             try
             {
                 string jsonData;
-
-                // تحميل من الإنترنت (تحديث تلقائي)
                 using (WebClient client = new WebClient())
                 {
                     jsonData = client.DownloadString(DnsListUrl);
                 }
-
                 dnsList = JsonConvert.DeserializeObject<List<string>>(jsonData);
                 MessageBox.Show($"تم تحميل {dnsList.Count} DNS من الإنترنت ✅", "تحديث القائمة", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -40,7 +36,6 @@ namespace newhhhh
             }
         }
 
-        // زر لاختبار DNS
         private void btnTestDns_Click(object sender, EventArgs e)
         {
             if (dnsList.Count == 0)
@@ -57,13 +52,12 @@ namespace newhhhh
             }
         }
 
-        // اختبار سرعة DNS بسيط عن طريق ping
         private bool TestDnsSpeed(string dns)
         {
             try
             {
                 var ping = new System.Net.NetworkInformation.Ping();
-                var reply = ping.Send(dns, 1000); // 1 ثانية Timeout
+                var reply = ping.Send(dns, 1000);
                 return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
             }
             catch
@@ -72,13 +66,11 @@ namespace newhhhh
             }
         }
 
-        // زر لتحديث القائمة يدويًا
         private void btnUpdateList_Click(object sender, EventArgs e)
         {
             LoadDnsList();
         }
 
-        // حفظ النتائج إلى ملف
         private void btnSaveResults_Click(object sender, EventArgs e)
         {
             try
