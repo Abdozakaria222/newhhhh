@@ -1,4 +1,4 @@
-name: Build Windows Forms App (.NET Framework 4.8)
+name: Build Windows Forms App
 
 on:
   push:
@@ -11,17 +11,17 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup MSBuild
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Install .NET Framework MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Add NuGet to PATH
-      uses: nuget/setup-nuget@v2
-
-    - name: Restore packages (optional)
-      run: nuget restore newhhhh.csproj
+    - name: Restore packages
+      run: dotnet restore
 
     - name: Build project
       run: msbuild newhhhh.csproj /p:Configuration=Release
