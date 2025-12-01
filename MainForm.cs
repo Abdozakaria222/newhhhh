@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
+using System.Net;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
-namespace DNSOptimizer
+namespace newhhhh
 {
     public partial class MainForm : Form
     {
-        private List<DnsTester> dnsList;
+        private List<string> dnsList = new List<string>();
+        private const string DnsListUrl = "https://raw.githubusercontent.com/Abdozakaria222/newhhhh/main/DNSList/dnslist.json";
 
         public MainForm()
         {
@@ -20,99 +18,85 @@ namespace DNSOptimizer
             LoadDnsList();
         }
 
-        private async void LoadDnsList(bool forceUpdate = false)
+        // تحميل قائمة DNS من الإنترنت أو من ملف محلي
+        private void LoadDnsList()
         {
-            string cachePath = Path.Combine(Application.StartupPath, "dns_cache.json");
-            string url = "https://raw.githubusercontent.com/Abdozakaria222/DNSList/main/dns.json";
-
-            if (forceUpdate || !File.Exists(cachePath))
-            {
-                try
-                {
-                    using (var client = new HttpClient())
-                    {
-                        client.Timeout = TimeSpan.FromSeconds(5);
-                        string json = await client.GetStringAsync(url);
-                        File.WriteAllText(cachePath, json);
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("تعذر تحديث قائمة DNS من الإنترنت. سيتم استخدام القائمة القديمة.", "تحذير");
-                }
-            }
-
             try
             {
-                string jsonData = File.ReadAllText(cachePath);
-                dnsList = JsonSerializer.Deserialize<List<DnsTester>>(jsonData);
-            }
-            catch
-            {
-                dnsList = new List<DnsTester>
-                {
-                    new DnsTester { Name = "Google", Address = "8.8.8.8" },
-                    new DnsTester { Name = "Cloudflare", Address = "1.1.1.1" }
-                };
-            }
+                string jsonData;
 
-            gridResults.DataSource = dnsList.Select(x => new
+                // تحميل من الإنترنت (تحديث تلقائي)
+                using (WebClient client = new WebClient())
+                {
+                    jsonData = client.DownloadString(DnsListUrl);
+                }
+
+                dnsList = JsonConvert.DeserializeObject<List<string>>(jsonData);
+                MessageBox.Show($"تم تحميل {dnsList.Count} DNS من الإنترنت ✅", "تحديث القائمة", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
             {
-                x.Name,
-                x.Address,
-                Response = "لم يتم الفحص بعد"
-            }).ToList();
+                MessageBox.Show($"حدث خطأ أثناء تحميل قائمة DNS:\n{ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private async void btnStart_Click(object sender, EventArgs e)
+        // زر لاختبار DNS
+        private void btnTestDns_Click(object sender, EventArgs e)
         {
-            btnStart.Enabled = false;
-            progressBar.Value = 0;
-            progressBar.Maximum = dnsList.Count;
-
-            foreach (var dns in dnsList)
+            if (dnsList.Count == 0)
             {
-                await dns.TestAsync();
-                progressBar.Value++;
-                gridResults.DataSource = dnsList.Select(x => new
-                {
-                    x.Name,
-                    x.Address,
-                    Response = x.ResponseTime == 9999 ? "فشل الاتصال" : $"{x.ResponseTime} ms"
-                }).OrderBy(x => x.Response).ToList();
-                gridResults.Refresh();
-            }
-
-            btnStart.Enabled = true;
-        }
-
-        private void btnApplyBest_Click(object sender, EventArgs e)
-        {
-            var best = dnsList.OrderBy(x => x.ResponseTime).FirstOrDefault();
-            if (best == null || best.ResponseTime == 9999)
-            {
-                MessageBox.Show("لا يوجد DNS سريع لتطبيقه.");
+                MessageBox.Show("قائمة DNS فارغة!", "تحذير", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            try
+            foreach (var dns in dnsList)
             {
-                Process.Start("netsh", $"interface ip set dns name=\"Ethernet\" static {best.Address}");
-                MessageBox.Show($"تم تطبيق DNS الأسرع: {best.Name} ({best.Address})", "تم");
-            }
-            catch
-            {
-                MessageBox.Show("يجب تشغيل البرنامج كمسؤول لتطبيق DNS.");
+                bool result = TestDnsSpeed(dns);
+                listBoxResults.Items.Add($"{dns} => {(result ? "✅ سريع" : "❌ بطيء")}");
+                Application.DoEvents();
             }
         }
 
-        private async void btnUpdateList_Click(object sender, EventArgs e)
+        // اختبار سرعة DNS بسيط عن طريق ping
+        private bool TestDnsSpeed(string dns)
         {
-            btnUpdateList.Enabled = false;
-            await Task.Delay(200);
-            LoadDnsList(forceUpdate: true);
-            MessageBox.Show("تم تحديث قائمة DNS من الإنترنت.", "تم");
-            btnUpdateList.Enabled = true;
+            try
+            {
+                var ping = new System.Net.NetworkInformation.Ping();
+                var reply = ping.Send(dns, 1000); // 1 ثانية Timeout
+                return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // زر لتحديث القائمة يدويًا
+        private void btnUpdateList_Click(object sender, EventArgs e)
+        {
+            LoadDnsList();
+        }
+
+        // حفظ النتائج إلى ملف
+        private void btnSaveResults_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string filePath = Path.Combine(Application.StartupPath, "results.txt");
+                File.WriteAllLines(filePath, GetListBoxItems());
+                MessageBox.Show($"تم حفظ النتائج في:\n{filePath}", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"تعذر حفظ النتائج:\n{ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private IEnumerable<string> GetListBoxItems()
+        {
+            foreach (var item in listBoxResults.Items)
+                yield return item.ToString();
         }
     }
 }
