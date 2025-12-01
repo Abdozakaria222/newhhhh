@@ -1,19 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- مراجع أساسية لـ JSON و HTTP -->
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Text.Json">
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Text.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
+    <!-- ملفات المشروع -->
     <Compile Include="Program.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs" />
@@ -21,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="MainForm.resx" />
   </ItemGroup>
+
 </Project>
