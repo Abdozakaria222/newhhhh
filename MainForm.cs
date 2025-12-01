@@ -11,6 +11,7 @@ namespace newhhhh
     public partial class MainForm : Form
     {
         private List<string> dnsList = new List<string>();
+        private Dictionary<string, long> dnsSpeedResults = new Dictionary<string, long>();
         private const string DnsListUrl = "https://raw.githubusercontent.com/Abdozakaria222/newhhhh/main/DNSList/dnslist.json";
 
         public MainForm()
@@ -129,17 +130,26 @@ namespace newhhhh
             listBoxResults.Items.Add("=== بدء اختبار سرعة DNS ===");
 
             int successful = 0;
+            dnsSpeedResults.Clear();
             
             foreach (var dns in dnsList)
             {
                 lblStatus.Text = $"جاري اختبار: {dns}";
                 Application.DoEvents();
                 
-                bool result = TestDnsSpeed(dns);
-                string status = result ? "✅ سريع" : "❌ بطيء/غير متاح";
-                listBoxResults.Items.Add($"{dns} => {status}");
-                
-                if (result) successful++;
+                long pingTime = TestDnsSpeed(dns);
+                if (pingTime > 0)
+                {
+                    dnsSpeedResults[dns] = pingTime;
+                    string status = $"✅ {pingTime} ms";
+                    listBoxResults.Items.Add($"{dns} => {status}");
+                    successful++;
+                }
+                else
+                {
+                    string status = "❌ غير متاح";
+                    listBoxResults.Items.Add($"{dns} => {status}");
+                }
                 
                 // إعطاء وقت للواجهة للتحديث
                 System.Threading.Thread.Sleep(100);
@@ -149,18 +159,23 @@ namespace newhhhh
             MessageBox.Show($"تم اختبار {dnsList.Count} DNS\n{successful} تعمل بشكل صحيح", "نتيجة الاختبار", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        // اختبار سرعة DNS بسيط عن طريق ping
-        private bool TestDnsSpeed(string dns)
+        // اختبار سرعة DNS وإرجاع وقت الاستجابة
+        private long TestDnsSpeed(string dns)
         {
             try
             {
                 var ping = new System.Net.NetworkInformation.Ping();
-                var reply = ping.Send(dns, 1000); // 1 ثانية Timeout
-                return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
+                var reply = ping.Send(dns, 3000); // 3 ثواني Timeout
+                
+                if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                {
+                    return reply.RoundtripTime;
+                }
+                return -1;
             }
             catch
             {
-                return false;
+                return -1;
             }
         }
 
@@ -189,6 +204,51 @@ namespace newhhhh
             {
                 MessageBox.Show($"تعذر حفظ النتائج:\n{ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // زر لاختيار أفضل DNS
+        private void btnBestDns_Click(object sender, EventArgs e)
+        {
+            if (dnsSpeedResults.Count == 0)
+            {
+                MessageBox.Show("لم يتم إجراء أي اختبارات بعد! يرجى اختبار DNS أولاً.", "تحذير", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // ترتيب الـ DNS حسب السرعة (من الأسرع إلى الأبطأ)
+            var sortedDns = dnsSpeedResults
+                .Where(x => x.Value > 0)
+                .OrderBy(x => x.Value)
+                .ToList();
+
+            if (sortedDns.Count == 0)
+            {
+                MessageBox.Show("لا توجد نتائج ناجحة لاختيار أفضل DNS!", "تحذير", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            listBoxResults.Items.Clear();
+            listBoxResults.Items.Add("=== أفضل DNS حسب السرعة ===");
+
+            int rank = 1;
+            foreach (var dns in sortedDns.Take(10)) // عرض أفضل 10 فقط
+            {
+                listBoxResults.Items.Add($"{rank}. {dns.Key} - {dns.Value} ms");
+                rank++;
+            }
+
+            // عرض أفضل DNS في MessageBox
+            var bestDns = sortedDns.First();
+            string bestDnsInfo = $"أفضل DNS:\n{bestDns.Key}\nالسرعة: {bestDns.Value} ms\n\n";
+            bestDnsInfo += $"أفضل 3 DNS:\n";
+            
+            for (int i = 0; i < Math.Min(3, sortedDns.Count); i++)
+            {
+                bestDnsInfo += $"{i + 1}. {sortedDns[i].Key} - {sortedDns[i].Value} ms\n";
+            }
+
+            MessageBox.Show(bestDnsInfo, "أفضل DNS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lblStatus.Text = $"أفضل DNS: {bestDns.Key} - {bestDns.Value} ms";
         }
 
         private IEnumerable<string> GetListBoxItems()
